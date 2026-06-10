@@ -1,0 +1,8 @@
+node_modules/
+client/node_modules/
+client/dist/
+data/
+release/
+.env
+*.db
+.DS_Store

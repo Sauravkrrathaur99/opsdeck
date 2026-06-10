@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpsDeck Setup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: #0f1419;
+      color: #e7ecf3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: #171d26;
+      border: 1px solid #2a3441;
+      border-radius: 12px;
+      padding: 28px;
+    }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    p { color: #9aa8b8; line-height: 1.5; margin-bottom: 20px; font-size: 0.95rem; }
+    label { display: block; font-size: 0.85rem; color: #b8c4d4; margin-bottom: 8px; }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f1419;
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+    input:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    button:hover { background: #1d4ed8; }
+    .error { color: #f87171; font-size: 0.85rem; min-height: 1.2em; margin-bottom: 12px; }
+    .hint { font-size: 0.8rem; color: #6b7c93; margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>OpsDeck — Team unlock</h1>
+    <p>Enter the shared access token from your team lead. OpsDeck only runs on this computer — nothing is exposed online.</p>
+    <div class="error" id="error"></div>
+    <label for="token">Access token</label>
+    <input id="token" type="password" placeholder="Paste OPSDECK_ACCESS_TOKEN" autocomplete="off" />
+    <button id="save">Continue</button>
+    <p class="hint">Your SSH passwords are encrypted locally on this PC. The token only unlocks the OpsDeck app itself.</p>
+  </div>
+  <script>
+    const tokenEl = document.getElementById('token');
+    const errorEl = document.getElementById('error');
+    document.getElementById('save').addEventListener('click', async () => {
+      errorEl.textContent = '';
+      const token = tokenEl.value.trim();
+      if (token.length < 16) {
+        errorEl.textContent = 'Token must be at least 16 characters.';
+        return;
+      }
+      const ok = await window.opsdeck.saveAccessToken(token);
+      if (!ok?.success) {
+        errorEl.textContent = ok?.error || 'Could not save token.';
+      }
+    });
+    tokenEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('save').click();
+    });
+  </script>
+</body>
+</html>

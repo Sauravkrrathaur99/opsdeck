@@ -1,0 +1,68 @@
+{
+  "name": "vps-command-center",
+  "version": "1.0.0",
+  "description": "OpsDeck - Internal VPS command center with terminal, file browser, and saved commands",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "node server/index.js",
+    "setup": "npm install && npm install --prefix client",
+    "desktop": "npm run build && electron .",
+    "desktop:rebuild": "electron-builder install-app-deps",
+    "desktop:build": "npm run build && electron-builder install-app-deps && electron-builder --win",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ssh2": "^1.16.0",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.opsdeck.desktop",
+    "productName": "OpsDeck",
+    "copyright": "Copyright © OpsDeck",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "server/**/*",
+      "client/dist/**/*",
+      "electron/**/*",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "OpsDeck"
+    }
+  }
+}
